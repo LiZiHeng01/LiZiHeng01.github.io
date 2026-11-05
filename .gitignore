@@ -1,0 +1,11 @@
+# Local only — never publish personal source photos
+李子恒相册/
+李哈哈相册/
+
+# Local tooling / test artifacts
+_build/
+_deploy/
+
+# OS noise
+Thumbs.db
+.DS_Store
