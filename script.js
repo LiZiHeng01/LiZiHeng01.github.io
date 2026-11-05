@@ -19,23 +19,11 @@
   const html = doc.documentElement;
   const body = doc.body;
 
-  const modal = qs('#work-modal');
-  const modalPanel = qs('.modal__panel');
-  const modalClose = qs('.modal__close');
-  const modalCover = qs('[data-modal-cover]');
-  const modalDetail = qs('[data-modal-detail]');
-  const modalTitle = qs('[data-modal-title]');
-  const modalIndex = qs('[data-modal-index]');
-  const modalSubtitle = qs('[data-modal-subtitle]');
-  const modalMeta = qs('[data-modal-meta]');
-
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const supportsInert = 'inert' in HTMLElement.prototype;
 
   let isMenuOpen = false;
-  let isModalOpen = false;
   let menuReturnFocus = null;
-  let modalTrigger = null;
 
   /* ------------------------------------------------------------------
      Scroll lock
@@ -155,61 +143,6 @@
     });
   }
 
-  /* ------------------------------------------------------------------
-     Work modal
-     ------------------------------------------------------------------ */
-  const openModal = (trigger) => {
-    if (!modal || isModalOpen) return;
-    const card = trigger.closest('.work-card');
-    if (!card) return;
-
-    isModalOpen = true;
-    modalTrigger = trigger;
-
-    if (modalIndex) modalIndex.textContent = trigger.dataset.index || '';
-    if (modalTitle) modalTitle.textContent = trigger.dataset.title || '';
-    if (modalSubtitle) modalSubtitle.textContent = trigger.dataset.subtitle || '';
-    if (modalMeta) modalMeta.textContent = trigger.dataset.meta || '';
-
-    const coverSvg = qs('.work-media > svg', card);
-    if (modalCover) {
-      modalCover.replaceChildren();
-      if (coverSvg) modalCover.appendChild(coverSvg.cloneNode(true));
-    }
-
-    if (modalDetail) {
-      modalDetail.replaceChildren();
-      const detailTemplate = qs('template.work-detail', card);
-      if (detailTemplate) {
-        modalDetail.appendChild(detailTemplate.content.cloneNode(true));
-      }
-    }
-
-    modal.hidden = false;
-    lockPage(true);
-    setBackgroundInert(true);
-    if (modalClose) modalClose.focus({ preventScroll: true });
-  };
-
-  const closeModal = () => {
-    if (!modal || !isModalOpen) return;
-    isModalOpen = false;
-    modal.hidden = true;
-    setBackgroundInert(false);
-    lockPage(false);
-    if (modalTrigger) {
-      modalTrigger.focus({ preventScroll: true });
-    }
-  };
-
-  qsa('.work-open').forEach((trigger) => {
-    trigger.addEventListener('click', () => openModal(trigger));
-  });
-
-  qsa('[data-modal-close]').forEach((element) => {
-    element.addEventListener('click', closeModal);
-  });
-
   doc.addEventListener('keydown', (event) => {
     if (isMenuOpen) {
       if (event.key === 'Escape') {
@@ -218,16 +151,6 @@
         return;
       }
       trapTab(event, menu);
-      return;
-    }
-
-    if (isModalOpen) {
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        closeModal();
-        return;
-      }
-      trapTab(event, modalPanel);
     }
   });
 
